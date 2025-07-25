@@ -14,6 +14,7 @@ import Contact from './Pages/Contact.jsx';
 import Login from './Pages/Login.jsx';
 import Signup from './Pages/Signup.jsx';
 import PrivateRoute from './Routes/PrivateRoute.jsx';
+import ResetDemo from './Pages/ResetDemo.jsx';
 
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
         <Route path="/learning" element={<LearningHub />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/reset" element={<ResetDemo />} />
         <Route path="/dashboard" element={
           <PrivateRoute>
             <Dashboard />

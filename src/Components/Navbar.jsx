@@ -10,21 +10,30 @@ const Navbar = () => {
         <Link to="/" className="text-xl font-bold">OrganicConnect</Link>
 
         <div className="flex gap-4 text-sm items-center">
-          <Link to="/" className="hover:underline">Home</Link>
-          <Link to="/marketplace" className="hover:underline">Marketplace</Link>
-          <Link to="/onboarding" className="hover:underline">Onboard</Link>
-          <Link to="/learning" className="hover:underline">Learn</Link>
-          <Link to="/dashboard" className="hover:underline">Dashboard</Link>
-          <Link to="/contact" className="hover:underline">Contact</Link>
-          {!user ? (
-            <>
-              <Link to="/login" className="hover:underline">Login</Link>
-              <Link to="/signup" className="hover:underline">Signup</Link>
-            </>
-          ) : (
-            <span className="ml-4 text-sm text-white">Hi, {user.name} ({user.userType})</span>
-          )}
-        </div>
+  <Link to="/" className="hover:underline">Home</Link>
+  <Link to="/marketplace" className="hover:underline">Marketplace</Link>
+  <Link to="/onboarding" className="hover:underline">Onboard</Link>
+  <Link to="/learning" className="hover:underline">Learn</Link>
+  <Link to="/dashboard" className="hover:underline">Dashboard</Link>
+  <Link to="/contact" className="hover:underline">Contact</Link>
+
+  {!user ? (
+    <>
+      <Link to="/login" className="hover:underline">Login</Link>
+      <Link to="/signup" className="hover:underline">Signup</Link>
+    </>
+  ) : (
+    <>
+      <span className="text-white">Hi, {user.name}</span>
+      {user.userType === "farmer" && (
+        <Link to="/reset" className="text-sm bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200 transition">
+          🔄 Reset
+        </Link>
+      )}
+    </>
+  )}
+</div>
+
       </div>
     </nav>
   );
