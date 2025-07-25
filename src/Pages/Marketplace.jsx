@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import ReviewForm from '../components/ReviewForm.jsx';
+import ReviewList from '../components/ReviewList.jsx';
+import OrderForm from '../Components/OrderForm.jsx';
+
 
 const Marketplace = () => {
   const [farmers, setFarmers] = useState([]);
+  const [filteredFarmers, setFilteredFarmers] = useState([]);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('');
   const [editIndex, setEditIndex] = useState(null);
   const [editData, setEditData] = useState({});
   const loggedIn = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -9,7 +16,26 @@ const Marketplace = () => {
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('registeredFarmers')) || [];
     setFarmers(stored);
+    setFilteredFarmers(stored);
   }, []);
+
+  useEffect(() => {
+    let data = [...farmers];
+
+    if (search) {
+      data = data.filter(farmer =>
+        farmer.name.toLowerCase().includes(search.toLowerCase()) ||
+        farmer.location.toLowerCase().includes(search.toLowerCase()) ||
+        farmer.product.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    if (filter) {
+      data = data.filter(farmer => farmer.product === filter);
+    }
+
+    setFilteredFarmers(data);
+  }, [search, filter, farmers]);
 
   const handleDelete = (indexToDelete) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this product?");
@@ -41,18 +67,39 @@ const Marketplace = () => {
   return (
     <div className="p-6">
       <h2 className="text-3xl font-bold mb-6">Explore Verified Organic Farmers</h2>
-      {farmers.length === 0 ? (
-        <p>No farmers registered yet.</p>
+
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search by name, product, or location..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 border p-2 rounded"
+        />
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="">All Crops</option>
+          <option value="Vegetables">Vegetables</option>
+          <option value="Fruits">Fruits</option>
+          <option value="Grains">Grains</option>
+          <option value="Herbs">Herbs</option>
+        </select>
+      </div>
+
+      {filteredFarmers.length === 0 ? (
+        <p>No matching farmers found.</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {farmers.map((farmer, index) => {
+          {filteredFarmers.map((farmer, index) => {
             const isOwner = loggedIn && farmer.name === loggedIn.name && loggedIn.userType === "farmer";
             const isEditing = editIndex === index;
 
             return (
               <div key={index} className="bg-white border rounded-lg overflow-hidden shadow hover:shadow-lg transition">
                 {farmer.photo && <img src={farmer.photo} alt={farmer.name} className="w-full h-48 object-cover" />}
-
                 <div className="p-4">
                   {isEditing ? (
                     <>
@@ -106,6 +153,19 @@ const Marketplace = () => {
                             </button>
                           </>
                         )}
+
+                        {/* Review Form for consumers */}
+                        {loggedIn && loggedIn.userType === 'consumer' && (
+                          <ReviewForm farmerName={farmer.name} />
+                        )}
+
+                        {/* Order Form (Consumers Only) */}
+                        {loggedIn && loggedIn.userType === 'consumer' && (
+                          <OrderForm farmer={farmer} />
+                        )}
+
+                        {/* Reviews Display */}
+                        <ReviewList farmerName={farmer.name} />
                       </div>
                     </>
                   )}
