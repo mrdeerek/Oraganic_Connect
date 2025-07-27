@@ -5,72 +5,168 @@ const FarmerOnboarding = () => {
     name: '',
     location: '',
     product: '',
-    photo: '',
-    certification: '',
     bio: '',
+    photo: '', // base64
+    contact: '',
+    certification: '',
+    selfDeclared: false
   });
 
-  const handleChange = (e) => {
-  const { name, value, files } = e.target;
+  const [status, setStatus] = useState('');
+  const [preview, setPreview] = useState(null);
 
-  if (files && files.length > 0) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: reader.result, // base64 string
-      }));
-    };
-    reader.readAsDataURL(files[0]);
-  } else {
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value
     }));
-  }
-};
+  };
 
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => ({ ...prev, photo: reader.result }));
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const farmers = JSON.parse(localStorage.getItem('registeredFarmers')) || [];
-    farmers.push(formData);
-    localStorage.setItem('registeredFarmers', JSON.stringify(farmers));
+    if (!formData.certification && !formData.selfDeclared) {
+      alert('⚠️ Please upload a certification or check Self-Declared option.');
+      return;
+    }
 
-    alert('Farmer registered successfully!');
+    const allFarmers = JSON.parse(localStorage.getItem('registeredFarmers')) || [];
+    allFarmers.push(formData);
+    localStorage.setItem('registeredFarmers', JSON.stringify(allFarmers));
+
+    setStatus('✅ Registered successfully!');
     setFormData({
       name: '',
       location: '',
       product: '',
-      photo: '',
-      certification: '',
       bio: '',
+      photo: '',
+      contact: '',
+      certification: '',
+      selfDeclared: false
     });
+    setPreview(null);
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6">Farmer Onboarding</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input name="name" type="text" value={formData.name} onChange={handleChange} placeholder="Full Name" className="w-full p-2 border rounded" required />
-        <input name="location" type="text" value={formData.location} onChange={handleChange} placeholder="Farm Location" className="w-full p-2 border rounded" required />
+    <div className="max-w-xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4 text-green-700">🌾 Farmer Onboarding</h2>
+      <p className="text-sm text-gray-600 mb-4">
+        Register as a verified organic farmer by sharing your details.
+      </p>
 
-        <select name="product" value={formData.product} onChange={handleChange} className="w-full p-2 border rounded" required>
-          <option value="">Select Main Crop</option>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="text"
+          name="name"
+          placeholder="Your Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          className="border p-2 rounded"
+        />
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          value={formData.location}
+          onChange={handleChange}
+          required
+          className="border p-2 rounded"
+        />
+        <select
+          name="product"
+          value={formData.product}
+          onChange={handleChange}
+          required
+          className="border p-2 rounded"
+        >
+          <option value="">-- Select Crop Type --</option>
           <option value="Vegetables">Vegetables</option>
           <option value="Fruits">Fruits</option>
           <option value="Grains">Grains</option>
           <option value="Herbs">Herbs</option>
         </select>
 
-        <textarea name="bio" value={formData.bio} onChange={handleChange} rows="4" placeholder="Short Bio (optional)" className="w-full p-2 border rounded"></textarea>
+        <textarea
+          name="bio"
+          placeholder="Short Bio (experience, farm practices, etc.)"
+          value={formData.bio}
+          onChange={handleChange}
+          required
+          className="border p-2 rounded"
+          rows={4}
+        />
 
-        <input name="photo" type="file" accept="image/*" onChange={handleChange} className="w-full p-2 border rounded" />
-        <input name="certification" type="file" accept=".pdf,.jpg,.png" onChange={handleChange} className="w-full p-2 border rounded" />
+        {/* ✅ Image Upload */}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoUpload}
+          required
+          className="border p-2 rounded"
+        />
+        {preview && (
+          <img
+            src={preview}
+            alt="Preview"
+            className="w-full max-h-48 object-cover rounded"
+          />
+        )}
 
-        <button type="submit" className="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700">Submit</button>
+        <input
+          type="tel"
+          name="contact"
+          placeholder="WhatsApp Contact Number"
+          value={formData.contact}
+          onChange={handleChange}
+          required
+          className="border p-2 rounded"
+        />
+
+        <input
+          type="url"
+          name="certification"
+          placeholder="Certification Document URL (optional)"
+          value={formData.certification}
+          onChange={handleChange}
+          className="border p-2 rounded"
+        />
+
+        <label className="text-sm flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="selfDeclared"
+            checked={formData.selfDeclared}
+            onChange={handleChange}
+          />
+          I don't have a certification (Self-Declared Organic)
+        </label>
+
+        <button
+          type="submit"
+          className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+        >
+          Submit Details
+        </button>
       </form>
+
+      {status && (
+        <p className="mt-4 text-sm text-center text-blue-700 font-medium">{status}</p>
+      )}
     </div>
   );
 };

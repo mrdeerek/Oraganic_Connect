@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import ReviewForm from '../components/ReviewForm.jsx';
-import ReviewList from '../components/ReviewList.jsx';
+import ReviewForm from '../Components/ReviewForm.jsx';
+import ReviewList from '../Components/ReviewList.jsx';
 import OrderForm from '../Components/OrderForm.jsx';
-
+import { useCart } from '../Context/CartContext.jsx';
 
 const Marketplace = () => {
   const [farmers, setFarmers] = useState([]);
@@ -12,6 +12,7 @@ const Marketplace = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [editData, setEditData] = useState({});
   const loggedIn = JSON.parse(localStorage.getItem('loggedInUser'));
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('registeredFarmers')) || [];
@@ -64,6 +65,29 @@ const Marketplace = () => {
     setEditIndex(null);
   };
 
+  const handleAddToWishlist = (farmer) => {
+    const existing = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const isAlreadyAdded = existing.some(item => item.name === farmer.name && item.product === farmer.product);
+
+    if (isAlreadyAdded) {
+      alert("This item is already in your wishlist!");
+      return;
+    }
+
+    const updated = [...existing, farmer];
+    localStorage.setItem('wishlist', JSON.stringify(updated));
+    alert("Added to wishlist!");
+  };
+
+  const calculateAverageRating = (farmerName) => {
+    const allReviews = JSON.parse(localStorage.getItem('reviews')) || [];
+    const farmerReviews = allReviews.filter(r => r.farmer === farmerName);
+    if (farmerReviews.length === 0) return null;
+
+    const total = farmerReviews.reduce((sum, r) => sum + r.rating, 0);
+    return (total / farmerReviews.length).toFixed(1);
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-3xl font-bold mb-6">Explore Verified Organic Farmers</h2>
@@ -113,6 +137,13 @@ const Marketplace = () => {
                     <>
                       <h3 className="text-xl font-semibold">{farmer.name}</h3>
                       <p className="text-sm text-gray-600">{farmer.location}</p>
+
+                      {calculateAverageRating(farmer.name) ? (
+                        <p className="text-yellow-600 text-sm">⭐ {calculateAverageRating(farmer.name)} / 5</p>
+                      ) : (
+                        <p className="text-gray-400 text-sm">No ratings yet</p>
+                      )}
+
                       <p className="text-green-700 font-medium">{farmer.product}</p>
                       <p className="text-sm mt-2">{farmer.bio}</p>
 
@@ -137,6 +168,17 @@ const Marketplace = () => {
                           </span>
                         )}
 
+                        {farmer.contact && (
+                          <a
+                            href={`https://wa.me/${farmer.contact}?text=Hi%20${farmer.name},%20I%20am%20interested%20in%20your%20organic%20produce.`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block bg-green-500 text-white px-3 py-1 text-sm rounded hover:bg-green-600"
+                          >
+                            💬 Contact on WhatsApp
+                          </a>
+                        )}
+
                         {isOwner && (
                           <>
                             <button
@@ -154,17 +196,32 @@ const Marketplace = () => {
                           </>
                         )}
 
-                        {/* Review Form for consumers */}
                         {loggedIn && loggedIn.userType === 'consumer' && (
-                          <ReviewForm farmerName={farmer.name} />
+                          <>
+                            <ReviewForm farmerName={farmer.name} />
+                            <OrderForm farmer={farmer} />
+                            <button
+                              onClick={() =>
+                                addToCart({
+                                  farmer: farmer.name,
+                                  product: farmer.product,
+                                  location: farmer.location,
+                                  photo: farmer.photo
+                                })
+                              }
+                              className="bg-blue-500 text-white px-3 py-1 text-sm rounded hover:bg-blue-600"
+                            >
+                              ➕ Add to Cart
+                            </button>
+                            <button
+                              onClick={() => handleAddToWishlist(farmer)}
+                              className="bg-pink-500 text-white px-3 py-1 text-sm rounded hover:bg-pink-600"
+                            >
+                              💚 Wishlist
+                            </button>
+                          </>
                         )}
 
-                        {/* Order Form (Consumers Only) */}
-                        {loggedIn && loggedIn.userType === 'consumer' && (
-                          <OrderForm farmer={farmer} />
-                        )}
-
-                        {/* Reviews Display */}
                         <ReviewList farmerName={farmer.name} />
                       </div>
                     </>

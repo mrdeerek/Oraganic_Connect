@@ -9,14 +9,15 @@ const OrderForm = ({ farmer }) => {
     e.preventDefault();
 
     const newOrder = {
-      consumer: user.name,
       farmer: farmer.name,
       product: farmer.product,
-      quantity,
-      note,
       location: farmer.location,
-      date: new Date().toLocaleString(),
+      quantity: form.quantity,
+      consumerEmail: loggedIn.email,
+      timestamp: Date.now(),
+      status: 'Pending'
     };
+
 
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(newOrder);

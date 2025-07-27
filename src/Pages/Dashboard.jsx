@@ -1,36 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Dashboard = () => {
-  const user = JSON.parse(localStorage.getItem('loggedInUser'));
+  const [myOrders, setMyOrders] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem('loggedInUser');
-    window.location.href = "/login";
-  };
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    setLoggedIn(user);
+
+    if (user && user.userType === "farmer") {
+      const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+      const filtered = allOrders.filter(order => order.farmer === user.name);
+      setMyOrders(filtered);
+    }
+  }, []); // ✅ Empty dependency to run only once on mount
+
+  if (!loggedIn || loggedIn.userType !== "farmer") {
+    return (
+      <div className="p-6 text-center">
+        <h2 className="text-xl font-bold text-red-500">Access Denied</h2>
+        <p className="text-sm mt-2">Only farmers can view this page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">Welcome, {user?.name}</h2>
-        <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-          Logout
-        </button>
-      </div>
+      <h2 className="text-2xl font-bold mb-4">📦 My Orders</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white border p-4 rounded shadow">
-          <h3 className="text-lg font-semibold">Product Views</h3>
-          <p className="text-2xl">245</p>
+      {myOrders.length === 0 ? (
+        <p>No orders received yet.</p>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-4">
+          {myOrders.map((order, idx) => (
+            <div key={idx} className="bg-white p-4 border rounded shadow">
+              <div className="text-sm">
+                <p><strong>👤 Consumer:</strong> {order.consumer}</p>
+                <p><strong>🌾 Product:</strong> {order.product}</p>
+                <p><strong>⚖️ Quantity:</strong> {order.quantity} kg</p>
+                <p><strong>📍 Location:</strong> {order.location}</p>
+                <p><strong>📝 Note:</strong> {order.note || 'N/A'}</p>
+                <p className="text-xs text-gray-500 mt-2"><strong>🕒 Placed on:</strong> {order.date}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="bg-white border p-4 rounded shadow">
-          <h3 className="text-lg font-semibold">Customer Reviews</h3>
-          <p className="text-2xl">30</p>
-        </div>
-        <div className="bg-white border p-4 rounded shadow">
-          <h3 className="text-lg font-semibold">Sales</h3>
-          <p className="text-2xl">50</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
