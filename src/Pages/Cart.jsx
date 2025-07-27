@@ -6,16 +6,26 @@ const Cart = () => {
   const user = JSON.parse(localStorage.getItem("loggedInUser"));
 
   const handleCheckout = () => {
+    if (!user) {
+      alert("Please log in to place an order.");
+      return;
+    }
+
     const orders = JSON.parse(localStorage.getItem("orders")) || [];
+
     const newOrders = cart.map((item) => ({
-      ...item,
-      consumer: user?.name,
-      date: new Date().toLocaleString(),
+      product: item.product,
+      farmer: item.farmer,
+      location: item.location,
+      quantity: item.quantity || "1 unit",
+      consumerEmail: user.email,
+      status: "Placed",
+      timestamp: Date.now(),
     }));
 
     localStorage.setItem("orders", JSON.stringify([...orders, ...newOrders]));
     clearCart();
-    alert("Checkout complete! Order placed.");
+    alert("✅ Checkout complete! Order placed.");
   };
 
   return (
