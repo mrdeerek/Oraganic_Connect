@@ -13,7 +13,7 @@ const Dashboard = () => {
       const filtered = allOrders.filter(order => order.farmer === user.name);
       setMyOrders(filtered);
     }
-  }, []); // ✅ Empty dependency to run only once on mount
+  }, []);
 
   if (!loggedIn || loggedIn.userType !== "farmer") {
     return (

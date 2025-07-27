@@ -38,9 +38,9 @@ const AdminOrders = () => {
                                     onChange={(e) => handleStatusChange(index, e.target.value)}
                                     className="border px-2 py-1 rounded"
                                 >
-                                    <option value="Pending">🕒 Pending</option>
-                                    <option value="Shipped">🚚 Shipped</option>
-                                    <option value="Delivered">✅ Delivered</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Delivered">Delivered</option>
                                 </select>
                             </div>
                         </div>

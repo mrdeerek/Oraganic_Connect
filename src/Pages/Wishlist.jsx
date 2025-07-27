@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useCart } from '../Context/CartContext';
+import React, { useEffect, useState } from "react";
+import { useCart } from "../Context/CartContext";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const { addToCart } = useCart();
-  const loggedIn = JSON.parse(localStorage.getItem('loggedInUser'));
+  const loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
     setWishlist(stored);
   }, []);
 
   const handleRemove = (index) => {
     const updated = [...wishlist];
     updated.splice(index, 1);
-    localStorage.setItem('wishlist', JSON.stringify(updated));
+    localStorage.setItem("wishlist", JSON.stringify(updated));
     setWishlist(updated);
   };
 
@@ -34,24 +34,24 @@ const Wishlist = () => {
       return;
     }
 
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
 
     const newOrder = {
       consumer: loggedIn.name,
       farmer: item.name,
       product: item.product,
       location: item.location,
-      status: 'Pending',
+      status: "Pending",
       timestamp: new Date().toISOString(),
     };
 
     orders.push(newOrder);
-    localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.setItem("orders", JSON.stringify(orders));
 
     // Remove from wishlist after ordering
     handleRemove(index);
 
-    alert("✅ Order placed successfully!");
+    alert("Order placed successfully!");
   };
 
   return (
@@ -63,7 +63,10 @@ const Wishlist = () => {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {wishlist.map((item, index) => (
-            <div key={index} className="bg-white shadow-md rounded-lg overflow-hidden">
+            <div
+              key={index}
+              className="bg-white shadow-md rounded-lg overflow-hidden"
+            >
               {item.photo && (
                 <img
                   src={item.photo}
@@ -84,28 +87,28 @@ const Wishlist = () => {
                     rel="noopener noreferrer"
                     className="text-sm text-white bg-green-500 px-3 py-1 rounded hover:bg-green-600"
                   >
-                    💬 Contact
+                    Contact
                   </a>
 
                   <button
                     onClick={() => handleAddToCart(item)}
                     className="text-sm text-white bg-blue-500 px-3 py-1 rounded hover:bg-blue-600"
                   >
-                    ➕ Add to Cart
+                    Add to Cart
                   </button>
 
                   <button
                     onClick={() => handlePlaceOrder(item, index)}
                     className="text-sm text-white bg-indigo-600 px-3 py-1 rounded hover:bg-indigo-700"
                   >
-                    ✅ Order Now
+                    Order Now
                   </button>
 
                   <button
                     onClick={() => handleRemove(index)}
                     className="text-sm text-white bg-red-500 px-3 py-1 rounded hover:bg-red-600"
                   >
-                    ❌ Remove
+                    Remove
                   </button>
                 </div>
               </div>

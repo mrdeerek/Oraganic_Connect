@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 const ReviewList = ({ farmerName }) => {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    const allReviews = JSON.parse(localStorage.getItem('reviews')) || [];
-    const filtered = allReviews.filter(r => r.farmer === farmerName);
+    const allReviews = JSON.parse(localStorage.getItem("reviews")) || [];
+    const filtered = allReviews.filter((r) => r.farmer === farmerName);
     setReviews(filtered);
   }, [farmerName]);
 

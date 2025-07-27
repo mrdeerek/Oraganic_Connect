@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const FarmerOnboarding = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    location: '',
-    product: '',
-    bio: '',
-    photo: '', // base64
-    contact: '',
-    certification: '',
-    selfDeclared: false
+    name: "",
+    location: "",
+    product: "",
+    bio: "",
+    photo: "",
+    contact: "",
+    certification: "",
+    selfDeclared: false,
   });
 
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState("");
   const [preview, setPreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -39,31 +39,34 @@ const FarmerOnboarding = () => {
     e.preventDefault();
 
     if (!formData.certification && !formData.selfDeclared) {
-      alert('⚠️ Please upload a certification or check Self-Declared option.');
+      alert("Please upload a certification or check Self-Declared option.");
       return;
     }
 
-    const allFarmers = JSON.parse(localStorage.getItem('registeredFarmers')) || [];
+    const allFarmers =
+      JSON.parse(localStorage.getItem("registeredFarmers")) || [];
     allFarmers.push(formData);
-    localStorage.setItem('registeredFarmers', JSON.stringify(allFarmers));
+    localStorage.setItem("registeredFarmers", JSON.stringify(allFarmers));
 
-    setStatus('✅ Registered successfully!');
+    setStatus("Registered successfully!");
     setFormData({
-      name: '',
-      location: '',
-      product: '',
-      bio: '',
-      photo: '',
-      contact: '',
-      certification: '',
-      selfDeclared: false
+      name: "",
+      location: "",
+      product: "",
+      bio: "",
+      photo: "",
+      contact: "",
+      certification: "",
+      selfDeclared: false,
     });
     setPreview(null);
   };
 
   return (
     <div className="max-w-xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-4 text-green-700">🌾 Farmer Onboarding</h2>
+      <h2 className="text-2xl font-bold mb-4 text-green-700">
+        🌾 Farmer Onboarding
+      </h2>
       <p className="text-sm text-gray-600 mb-4">
         Register as a verified organic farmer by sharing your details.
       </p>
@@ -111,7 +114,6 @@ const FarmerOnboarding = () => {
           rows={4}
         />
 
-        {/* ✅ Image Upload */}
         <input
           type="file"
           accept="image/*"
@@ -165,7 +167,9 @@ const FarmerOnboarding = () => {
       </form>
 
       {status && (
-        <p className="mt-4 text-sm text-center text-blue-700 font-medium">{status}</p>
+        <p className="mt-4 text-sm text-center text-blue-700 font-medium">
+          {status}
+        </p>
       )}
     </div>
   );

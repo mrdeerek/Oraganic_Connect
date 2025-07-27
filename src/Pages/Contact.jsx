@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import emailjs from '@emailjs/browser';
+import React, { useState } from "react";
+import emailjs from "@emailjs/browser";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    from_name: '',
-    from_email: '',
-    message: '',
+    from_name: "",
+    from_email: "",
+    message: "",
   });
 
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,34 +18,32 @@ const Contact = () => {
     e.preventDefault();
 
     const templateParams = {
-      name: formData.from_name,         // Maps to {{name}} in EmailJS
-      email: formData.from_email,       // Maps to {{email}} in EmailJS
-      message: formData.message,        // Used in email content
-      time: new Date().toLocaleString() // Optional: for timestamp
+      name: formData.from_name,
+      email: formData.from_email,
+      message: formData.message,
+      time: new Date().toLocaleString(),
     };
 
     try {
-      // 1️⃣ Send to Admin
       await emailjs.send(
-        'service_9ws246s',          // Your EmailJS Service ID
-        'template_740jymk',         // Admin email template ID
+        "service_9ws246s",
+        "template_740jymk",
         templateParams,
-        'xNaNcDI7bxhg71fl_'         // Your Public Key
+        "xNaNcDI7bxhg71fl_"
       );
 
-      // 2️⃣ Auto-reply to User
       await emailjs.send(
-        'service_9ws246s',
-        'template_740jymk',       // Auto-reply template ID
+        "service_9ws246s",
+        "template_740jymk",
         templateParams,
-        'xNaNcDI7bxhg71fl_'
+        "xNaNcDI7bxhg71fl_"
       );
 
-      setStatus('✅ Message sent and confirmation delivered!');
-      setFormData({ from_name: '', from_email: '', message: '' });
+      setStatus("Message sent and confirmation delivered!");
+      setFormData({ from_name: "", from_email: "", message: "" });
     } catch (error) {
-      console.error('EmailJS error:', error);
-      setStatus('❌ Message failed to send. Try again.');
+      console.error("EmailJS error:", error);
+      setStatus("Message failed to send. Try again.");
     }
   };
 

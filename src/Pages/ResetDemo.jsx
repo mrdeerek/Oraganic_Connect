@@ -20,7 +20,7 @@ const ResetDemo = () => {
         onClick={handleReset}
         className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition"
       >
-        🔄 Reset Now
+        Reset Now
       </button>
     </div>
   );
