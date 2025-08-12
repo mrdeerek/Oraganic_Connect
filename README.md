@@ -271,8 +271,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Kunal Raj** - Lead Developer
 - Email: kunalraj845438@gmail.com
+- **Kashish Gupta** 
+- **Ayush Prem**
+- **Yash Narayan**
 - University: Chandigarh University, India
-
 ## 🙏 Acknowledgments
 
 - Organic farmers who inspired this platform
@@ -281,8 +283,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Email**: ayushpremrocks@gmail.com
-- **Phone**: +91 8421283412
+- **Email**: kunalraj845438@gmail.com
+- **Phone**: +91 7564825637
 - **Location**: Chandigarh University, India
 
 ---
